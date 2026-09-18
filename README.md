@@ -4,7 +4,7 @@ SlotLock is a personal portfolio project by [Jhonatan Casale](https://github.com
 building a production-oriented FastAPI reservation backend. It explores reliable
 persistence, concurrency, idempotency, testing, and backend architecture.
 
-Current milestone: M1 — Persistence.
+Current milestone: M1 — Persistence (complete).
 
 ## Current scope
 
@@ -142,7 +142,7 @@ Development data is retained in its named volume. Test data is disposable.
 ## Roadmap
 
 - M0 — Skeleton (complete)
-- M1 — Persistence
+- M1 — Persistence (complete)
 - M2 — Real API
 - M3 — Backend Depth
 - M4 — Performance & Integration

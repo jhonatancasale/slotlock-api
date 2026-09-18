@@ -1,7 +1,7 @@
 # SlotLock API — M1 Specification
 
 > **Milestone:** M1 — Persistence
-> **Status:** Implemented — CI and fresh verification pending
+> **Status:** Complete — verified 2026-09-18
 > **Depends on:** M0 — Skeleton
 > **Goal:** Connect SlotLock to PostgreSQL through an asynchronous SQLAlchemy persistence layer, manage schema evolution with Alembic, persist the first real domain entity, and prove the stack with integration tests against PostgreSQL.
 
@@ -1269,80 +1269,80 @@ Guidance, not ceremony.
 
 ### Configuration
 
-- [ ] `pydantic-settings` used.
-- [ ] `.env.example` committed.
-- [ ] `.env` ignored.
-- [ ] `DATABASE_URL` externalized.
-- [ ] `TEST_DATABASE_URL` explicit and safe.
+- [x] `pydantic-settings` used.
+- [x] `.env.example` committed.
+- [x] `.env` ignored.
+- [x] `DATABASE_URL` externalized.
+- [x] `TEST_DATABASE_URL` explicit and safe.
 
 ### Persistence
 
-- [ ] SQLAlchemy 2.x async stack configured.
-- [ ] `asyncpg` used.
-- [ ] `create_async_engine` used.
-- [ ] `async_sessionmaker` used.
-- [ ] `expire_on_commit=False` deliberate.
-- [ ] sessions are not globally shared.
-- [ ] async `SELECT 1` succeeds.
+- [x] SQLAlchemy 2.x async stack configured.
+- [x] `asyncpg` used.
+- [x] `create_async_engine` used.
+- [x] `async_sessionmaker` used.
+- [x] `expire_on_commit=False` deliberate.
+- [x] sessions are not globally shared.
+- [x] async `SELECT 1` succeeds.
 
 ### Resource
 
-- [ ] Resource model exists.
-- [ ] UUID PK works.
-- [ ] name persists.
-- [ ] optional description persists.
-- [ ] active defaults true.
-- [ ] created_at populated.
-- [ ] updated_at populated.
+- [x] Resource model exists.
+- [x] UUID PK works.
+- [x] name persists.
+- [x] optional description persists.
+- [x] active defaults true.
+- [x] created_at populated.
+- [x] updated_at populated.
 
 ### Health/readiness
 
-- [ ] `/health` remains DB-independent.
-- [ ] `/ready` returns 200 with healthy PostgreSQL.
-- [ ] `/ready` returns 503 for controlled DB failure.
-- [ ] no sensitive DB error details leak.
+- [x] `/health` remains DB-independent.
+- [x] `/ready` returns 200 with healthy PostgreSQL.
+- [x] `/ready` returns 503 for controlled DB failure.
+- [x] no sensitive DB error details leak.
 
 ### Alembic
 
-- [ ] async migration environment configured.
-- [ ] application metadata is target metadata.
-- [ ] initial Resource migration exists.
-- [ ] generated migration reviewed.
-- [ ] empty DB → upgrade head works.
-- [ ] downgrade base works.
-- [ ] second upgrade head works.
-- [ ] current reports head.
-- [ ] `alembic check` reports no pending ops.
-- [ ] schema setup does not depend on `create_all()`.
+- [x] async migration environment configured.
+- [x] application metadata is target metadata.
+- [x] initial Resource migration exists.
+- [x] generated migration reviewed.
+- [x] empty DB → upgrade head works.
+- [x] downgrade base works.
+- [x] second upgrade head works.
+- [x] current reports head.
+- [x] `alembic check` reports no pending ops.
+- [x] schema setup does not depend on `create_all()`.
 
 ### Testing
 
-- [ ] pytest-asyncio configured.
-- [ ] DB tests use PostgreSQL.
-- [ ] tests use dedicated local test DB.
-- [ ] safety guard exists.
-- [ ] test schema comes from migrations.
-- [ ] tests are isolated.
-- [ ] Resource persistence test passes.
-- [ ] readiness success test passes.
-- [ ] readiness failure test passes.
-- [ ] M0 health test remains green.
+- [x] pytest-asyncio configured.
+- [x] DB tests use PostgreSQL.
+- [x] tests use dedicated local test DB.
+- [x] safety guard exists.
+- [x] test schema comes from migrations.
+- [x] tests are isolated.
+- [x] Resource persistence test passes.
+- [x] readiness success test passes.
+- [x] readiness failure test passes.
+- [x] M0 health test remains green.
 
 ### Docker / CI / docs
 
-- [ ] dev PostgreSQL remains healthy.
-- [ ] separate test PostgreSQL exists.
-- [ ] test storage is separate/disposable.
-- [ ] CI provisions PostgreSQL.
-- [ ] CI applies migrations.
-- [ ] CI runs `alembic check`.
-- [ ] CI runs lint/format/tests.
-- [ ] README reflects M1.
-- [ ] `docs/specs/m1 - spec.md` committed.
-- [ ] fresh verification succeeds.
-- [ ] verification record appended.
-- [ ] default branch green.
-- [ ] spec marked `Complete`.
+- [x] dev PostgreSQL remains healthy.
+- [x] separate test PostgreSQL exists.
+- [x] test storage is separate/disposable.
+- [x] CI provisions PostgreSQL.
+- [x] CI applies migrations.
+- [x] CI runs `alembic check`.
+- [x] CI runs lint/format/tests.
+- [x] README reflects M1.
+- [x] `docs/specs/m1 - spec.md` committed.
+- [x] fresh verification succeeds.
+- [x] verification record appended.
+- [x] default branch green.
+- [x] spec marked `Complete`.
 
 ---
 
@@ -1401,3 +1401,32 @@ M0: HTTP process exists
 M1: persistent state exists
 M2: useful domain API exists
 ```
+
+
+## 30. Verification record — 2026-09-18
+
+Verified implementation commit `68b297230085af546c98038e83e79817503f3a08`
+from a fresh public GitHub clone with Python 3.13.11 and Poetry 2.4.3.
+
+- Fresh virtual environment: all locked dependencies installed successfully.
+- PostgreSQL 18: separate development and test services became healthy with
+  fresh, isolated storage. Temporary Compose overrides used ports 5542/5543
+  and project `slotlock-m1-verification` to avoid existing local services.
+- Migration `b287932560d1` was autogenerated and reviewed: only `resources`,
+  its primary key, required field types/nullability, and server defaults.
+- Empty database upgrade, `current` at head, downgrade to base, second upgrade,
+  and both drift checks passed. Test schema setup also applied Alembic from empty.
+- Ruff lint and formatting checks passed. All 16 tests passed with 98%
+  application coverage, including persistence, ORM timestamp updates, committed
+  data isolation, unsafe/missing test configuration, and readiness contracts.
+- Live `/health` and `/ready` both returned HTTP 200 with the documented JSON.
+- A clean local clone of the same commit additionally passed a real outage and
+  recovery check: stopping its isolated database left `/health` at 200, changed
+  `/ready` to a sanitized 503, and restarting PostgreSQL restored readiness to 200.
+- Two dependency deprecation warnings (Starlette/httpx and AnyIO's portal alias)
+  were non-failing; dependency migration is deferred beyond M1.
+- [GitHub Actions run 35337925227](https://github.com/jhonatancasale/slotlock-api/actions/runs/35337925227)
+  passed on `main`, including PostgreSQL provisioning, migration application,
+  drift checking, lint, formatting, and tests.
+
+No Resource HTTP endpoints or later-milestone features were added.
