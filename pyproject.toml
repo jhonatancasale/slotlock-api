@@ -1,0 +1,49 @@
+[project]
+name = "slotlock-api"
+version = "0.1.0"
+description = "A production-oriented FastAPI reservation backend."
+authors = [{ name = "Jhonatan Casale" }]
+readme = "README.md"
+requires-python = ">=3.13,<3.14"
+dependencies = ["fastapi[standard] (>=0.141.1,<0.142.0)"]
+
+[tool.poetry]
+packages = [{ include = "slotlock" }]
+
+[build-system]
+requires = ["poetry-core>=2.0.0,<3.0.0"]
+build-backend = "poetry.core.masonry.api"
+
+[tool.ruff]
+line-length = 79
+target-version = "py313"
+
+[tool.ruff.lint]
+preview = true
+select = ["I", "F", "E", "W", "PL", "PT"]
+
+[tool.ruff.format]
+preview = true
+quote-style = "single"
+
+[tool.pytest.ini_options]
+pythonpath = ["."]
+testpaths = ["tests"]
+
+[tool.taskipy.tasks]
+lint = "ruff check ."
+pre_format = "ruff check --fix ."
+format = "ruff format ."
+run = "fastapi dev slotlock/app.py"
+pre_test = "task lint"
+test = "pytest -s -x --cov=slotlock -vv"
+post_test = "coverage html"
+
+[dependency-groups]
+dev = [
+    "pytest (>=9.1.1,<10.0.0)",
+    "pytest-cov (>=7.1.0,<8.0.0)",
+    "taskipy (>=1.14.1,<2.0.0)",
+    "ruff (>=0.16.8,<0.17.0)",
+    "httpx (>=0.28.1,<0.29.0)"
+]

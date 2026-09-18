@@ -1,0 +1,22 @@
+name: slotlock
+
+services:
+  postgres:
+    image: postgres:18
+    environment:
+      POSTGRES_DB: slotlock
+      POSTGRES_USER: slotlock
+      POSTGRES_PASSWORD: slotlock
+    ports:
+      - "127.0.0.1:5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U slotlock -d slotlock"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+      start_period: 10s
+
+volumes:
+  postgres_data:
