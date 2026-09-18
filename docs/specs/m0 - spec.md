@@ -1,7 +1,7 @@
 # SlotLock API — M0 Specification
 
 > **Milestone:** M0 — Skeleton  
-> **Status:** Ready for implementation  
+> **Status:** Complete — verified 2026-09-18  
 > **Goal:** Turn the repository into a small, reproducible, tested FastAPI project with PostgreSQL available locally and CI green.
 >
 > **Reference implementation:** [FastAPI do Zero — Aula 01: Configurando o ambiente de desenvolvimento](https://fastapidozero.dunossauro.com/4.0/01/)
@@ -164,7 +164,9 @@ slotlock-api/
 ├── pyproject.toml
 ├── poetry.lock
 ├── README.md
-└── spec.md
+└── docs/
+    └── specs/
+        └── m0 - spec.md
 ```
 
 Do **not** create the future `domain/`, `application/`, or `infrastructure/` package hierarchy yet.
@@ -828,25 +830,45 @@ The goal is readable history, not ceremonial commit choreography.
 
 M0 is **DONE** only when all checkboxes below are true:
 
-- [ ] Public `slotlock-api` GitHub repository exists.
-- [ ] Python 3.13 project is managed by Poetry.
-- [ ] `poetry install` succeeds.
-- [ ] FastAPI application starts.
-- [ ] `GET /health` returns `200`.
-- [ ] `/health` returns `{"status": "ok"}`.
-- [ ] Automated test covers the health endpoint.
-- [ ] `poetry run task lint` passes.
-- [ ] `poetry run task test` passes.
-- [ ] `poetry run task format` exists and works.
-- [ ] PostgreSQL starts through Docker Compose.
-- [ ] PostgreSQL reports healthy.
-- [ ] `.gitignore` excludes local/generated/sensitive files.
-- [ ] GitHub Actions runs on pushes and pull requests.
-- [ ] GitHub Actions lint gate is green.
-- [ ] GitHub Actions test gate is green.
-- [ ] README contains reproducible setup instructions.
-- [ ] Fresh-clone verification succeeds.
-- [ ] Default branch is green.
+- [x] Public `slotlock-api` GitHub repository exists.
+- [x] Python 3.13 project is managed by Poetry.
+- [x] `poetry install` succeeds.
+- [x] FastAPI application starts.
+- [x] `GET /health` returns `200`.
+- [x] `/health` returns `{"status": "ok"}`.
+- [x] Automated test covers the health endpoint.
+- [x] `poetry run task lint` passes.
+- [x] `poetry run task test` passes.
+- [x] `poetry run task format` exists and works.
+- [x] PostgreSQL starts through Docker Compose.
+- [x] PostgreSQL reports healthy.
+- [x] `.gitignore` excludes local/generated/sensitive files.
+- [x] GitHub Actions runs on pushes and pull requests.
+- [x] GitHub Actions lint gate is green.
+- [x] GitHub Actions test gate is green.
+- [x] README contains reproducible setup instructions.
+- [x] Fresh-clone verification succeeds.
+- [x] Default branch is green.
+
+### Verification record — 2026-09-18
+
+Verified published commit `e57d22be0c74a966e54572d1108b7cd4ae9eba7d`
+from a fresh GitHub clone and a new virtual environment.
+
+- Python 3.13.11 and Poetry 2.4.3: dependency installation succeeded.
+- Lint, formatting, and tests passed; one test passed with 100% application coverage.
+- Formatting left tracked files unchanged.
+- The API started with `poetry run task run`; a live `GET /health` returned
+  HTTP `200`, `application/json`, and `{"status":"ok"}`.
+- PostgreSQL started with a fresh volume and became healthy. A temporary Compose
+  override used port 5433 and a separate project name because the development
+  database already occupied port 5432.
+- Compose shutdown succeeded. The temporary container, network, volume, virtual
+  environment, and clone were removed; the development database remained running.
+- [GitHub Actions run on main](https://github.com/jhonatancasale/slotlock-api/actions/runs/35325232349)
+  passed installation, lint, formatting, and tests. Pull-request triggers are
+  configured; a separate pull-request run was not exercised.
+- Two dependency deprecation warnings were non-failing.
 
 ---
 
